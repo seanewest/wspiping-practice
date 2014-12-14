@@ -1,17 +1,16 @@
 var WebSocketServer = require('ws').Server
 var websocket = require('websocket-stream')
-var through2 = require('through2')
-var es = require('event-stream')
+var through = require('through')
 
-var broadcastPipe = through2();
+var broadcastPipe = through();
 
 var wss = new WebSocketServer({port: 3000})
 wss.on('connection', function(ws) {
   var wsstream = websocket(ws)
   process.stdin
-    .pipe(es.through(function write(data) {
+    .pipe(through(function (data) {
       var text = data.toString().trim();
-      this.emit('data', text)}))
+      this.queue(text)}))
     .pipe(wsstream)
     .pipe(broadcastPipe)
     .pipe(wsstream)
