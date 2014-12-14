@@ -2,7 +2,7 @@ var WebSocketServer = require('ws').Server
 var websocket = require('websocket-stream')
 var through = require('through')
 
-var broadcastPipe = through();
+var sharedStream = through();
 
 var wss = new WebSocketServer({port: 3000})
 wss.on('connection', function(ws) {
@@ -12,7 +12,7 @@ wss.on('connection', function(ws) {
       var text = data.toString().trim();
       this.queue(text)}))
     .pipe(wsstream)
-    .pipe(broadcastPipe)
+    .pipe(sharedStream)
     .pipe(wsstream)
     .pipe(process.stdout)
 })

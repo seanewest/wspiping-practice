@@ -1,15 +1,15 @@
 var WebSocketServer = require('ws').Server
 var websocket = require('websocket-stream')
-var through2 = require('through2')
+var through = require('through')
 
-var broadcastPipe = through2();
+var sharedStream = through();
 
 var wss = new WebSocketServer({port: 3000})
 wss.on('connection', function(ws) {
   var wsstream = websocket(ws)
   process.stdin
     .pipe(wsstream)
-    .pipe(broadcastPipe)
+    .pipe(sharedStream)
     .pipe(wsstream)
     .pipe(process.stdout)
 })
